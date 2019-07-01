@@ -31,7 +31,15 @@ namespace scp035
 			corrodeDamage = instance.GetConfigInt("035_corrode_damage");
 			corrodeInterval = instance.GetConfigFloat("035_corrode_interval");
 			corrodeLifeSteal = instance.GetConfigBool("035_corrode_life_steal");
-		}
+
+            int ConfigBCTime = instance.GetConfigInt("035_bc_time");
+            if (ConfigBCTime > -1) bctime = ConfigBCTime;
+            else bctime = 10;
+
+            hiding = instance.GetTranslation("hiding");
+            picked = instance.GetTranslation("picked");
+            infection = instance.GetTranslation("infection");
+        }
 
 		private void ResetItemDurability()
 		{
@@ -121,12 +129,12 @@ namespace scp035
 				p035.SetAmmo(AmmoType.DROPPED_7, player.GetAmmo(AmmoType.DROPPED_7));
 				p035.SetAmmo(AmmoType.DROPPED_9, player.GetAmmo(AmmoType.DROPPED_9));
 				p035.SetRank("red", "SCP-035");
-				p035.PersonalBroadcast(10, $"You are <color=\"red\">SCP-035!</color> You have infected a body and have gained control over it, use it to help the other SCPs!", false);
+				p035.PersonalBroadcast((uint)bctime, infection, false);
 				scpPlayer = p035;
 				isRotating = false;
 
 				player.ChangeRole(Role.SPECTATOR);
-				player.PersonalBroadcast(10, $"You have picked up <color=\"red\">SCP-035.</color> He has infected your body and is now in control of you.", false);
+				player.PersonalBroadcast((uint)bctime, picked, false);
 
 				if (spawnNewItems) RemovePossessedItems(); else ResetItemDurability();
 			}
@@ -165,7 +173,7 @@ namespace scp035
 		public bool HandleHideTagHook(CharacterClassManager __instance)
 		{
 			bool a = __instance.SteamId == scpPlayer?.SteamId;
-			if (a) __instance.TargetConsolePrint(__instance.connectionToClient, "You're not trying to exploit the system by hiding your tag as SCP-035 now, are you?", "green");
+			if (a) __instance.TargetConsolePrint(__instance.connectionToClient, hiding, "green");
 			return !a;
 		}
 	}

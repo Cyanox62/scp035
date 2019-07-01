@@ -43,6 +43,11 @@ namespace scp035
 			AddConfig(new Smod2.Config.ConfigSetting("035_corrode_damage", 5, false, true, "The amount of damage to do to a player within range of corrosion."));
 			AddConfig(new Smod2.Config.ConfigSetting("035_corrode_interval", 1f, false, true, "The interval in seconds for corrosion damage."));
 			AddConfig(new Smod2.Config.ConfigSetting("035_corrode_life_steal", true, false, true, "If SCP-035 should steal any health taken from other players by corrosion."));
-		}
+
+            AddConfig(new Smod2.Config.ConfigSetting("035_bc_time", 10, true, "Broadcast time"));
+            AddTranslation(new Smod2.Lang.LangSetting("infection", "You are <color=red>SCP-035!</color> You have infected a body and have gained control over it, use it to help the other SCPs!", "SCP035"));
+            AddTranslation(new Smod2.Lang.LangSetting("picked", "You have picked up <color=red>SCP-035.</color> He has infected your body and is now in control of you.", "SCP035"));
+            AddTranslation(new Smod2.Lang.LangSetting("hiding", "You're not trying to exploit the system by hiding your tag as SCP-035 now, are you?", "SCP035)"));
+        }
 	}
 }

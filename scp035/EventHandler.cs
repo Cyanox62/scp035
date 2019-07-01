@@ -40,7 +40,13 @@ namespace scp035
 		private float corrodeInterval;
 		private bool corrodeLifeSteal;
 
-		public EventHandler(Plugin plugin)
+        private int bctime;
+        private string infection;
+        private string picked;
+        private string hiding;
+
+
+        public EventHandler(Plugin plugin)
 		{
 			instance = plugin;
 			hInstance = this;
