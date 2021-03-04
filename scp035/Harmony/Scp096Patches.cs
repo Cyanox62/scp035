@@ -24,7 +24,7 @@ namespace scp035.Harmony
 			var player = generator.DeclareLocal(typeof(Player));
 			var scp035 = generator.DeclareLocal(typeof(Player));
 
-			newInstructions.InsertRange(firstOffset, new CodeInstruction[] 
+			newInstructions.InsertRange(firstOffset, new CodeInstruction[]
 			{
 				new CodeInstruction(OpCodes.Call, Method(typeof(Player), nameof(Player.Get), new[] { typeof(UnityEngine.GameObject) })),
 				new CodeInstruction(OpCodes.Stloc_1, player.LocalIndex),
