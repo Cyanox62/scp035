@@ -110,7 +110,7 @@ namespace scp035
 			// If friendly fire is off, to allow for chaos and dclass to hurt eachother
 			if ((ev.Shooter.Id == scpPlayer?.Id || target.Id == scpPlayer?.Id) &&
 				(((ev.Shooter.Team == Team.CDP && target.Team == Team.CHI)
-				|| (ev.Shooter.Team == Team.CHI && target.Team == Team.CDP)) || 
+				|| (ev.Shooter.Team == Team.CHI && target.Team == Team.CDP)) ||
 				((ev.Shooter.Team == Team.RSC && target.Team == Team.MTF)
 				|| (ev.Shooter.Team == Team.MTF && target.Team == Team.RSC))))
 			{
