@@ -59,14 +59,7 @@ namespace scp035
 			if (scpPickups.Contains(ev.Pickup))
 			{
 				ev.IsAllowed = false;
-				if (Player.List.Select(x => x.Team == Team.RIP).Count() != 0)
-				{
-					InfectPlayer(ev.Player, ev.Pickup);
-				}
-				else
-				{
-					ev.Pickup.Delete();
-				}
+				InfectPlayer(ev.Player, ev.Pickup);
 			}
 		}
 
