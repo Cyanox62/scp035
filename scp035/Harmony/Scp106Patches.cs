@@ -122,4 +122,3 @@ namespace scp035.Harmony
 		}
 	}
 }
-}
