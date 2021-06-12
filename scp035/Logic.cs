@@ -105,6 +105,12 @@ namespace scp035
 			{
 				coroutines.Add(Timing.RunCoroutine(CorrodeHost()));
 			}
+
+			Player scp966 = Player.List.FirstOrDefault(p => p.SessionVariables.ContainsKey("is966") && (bool)p.SessionVariables["is966"]);
+			if (scp966 != null)
+			{
+				p035.TargetGhostsHashSet.Remove(scp966.Id);
+			}
 		}
 
 		public static void InfectPlayer(Player player, Pickup pItem)
