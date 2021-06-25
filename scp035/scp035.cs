@@ -13,6 +13,8 @@ namespace scp035
 
 		private EventHandlers ev;
 
+		private MethodBase cmdmoveplayer;
+
 		public override void OnEnabled()
 		{
 			base.OnEnabled();
@@ -22,6 +24,7 @@ namespace scp035
 			foreach (MethodBase method in Events.Instance.Harmony.GetPatchedMethods())
 				if (method.DeclaringType?.Name == "Scp106PlayerScript" && method.Name == "CallCmdMovePlayer")
 				{
+					cmdmoveplayer = method;
 					Events.DisabledPatchesHashSet.Add(method);
 					break;
 				}
@@ -80,7 +83,10 @@ namespace scp035
 			Exiled.Events.Handlers.Player.MedicalItemUsed -= ev.OnUsedMedicalItem;
 			Exiled.Events.Handlers.Server.SendingRemoteAdminCommand -= ev.OnRACommand;
 
+			Events.DisabledPatchesHashSet.Remove(cmdmoveplayer);
+
 			hInstance.UnpatchAll();
+			hInstance = null;
 
 			ev = null;
 		}
