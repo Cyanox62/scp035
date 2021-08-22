@@ -4,6 +4,11 @@ using UnityEngine;
 using MEC;
 using Exiled.API.Features;
 using Exiled.API.Enums;
+using Exiled.API.Features.Items;
+using InventorySystem;
+using InventorySystem.Items;
+using InventorySystem.Items.Pickups;
+using Exiled.API.Extensions;
 
 namespace scp035
 {
@@ -14,14 +19,14 @@ namespace scp035
 			for (int i = 0; i < scpPickups.Count; i++)
 			{
 				Pickup p = scpPickups[i];
-				if (p != null) p.Delete();
+				if (p != null) p.Destroy();
 			}
 			scpPickups.Clear();
 		}
 
-		private static Pickup GetRandomItem()
+		private static ItemPickupBase GetRandomItem()
 		{
-			List<Pickup> pickups = GameObject.FindObjectsOfType<Pickup>().Where(x => !scpPickups.Contains(x)).ToList();
+			List<ItemPickupBase> pickups = GameObject.FindObjectsOfType<ItemPickupBase>().Where(x => !scpPickups.Contains(Pickup.Get(x))).ToList();
 			return pickups[rand.Next(pickups.Count)];
 		}
 
@@ -32,13 +37,8 @@ namespace scp035
 			{
 				for (int i = 0; i < scp035.instance.Config.InfectedItemCount; i++)
 				{
-					Pickup p = GetRandomItem();
-					Pickup a = PlayerManager.localPlayer
-						.GetComponent<Inventory>().SetPickup((ItemType)scp035.instance.Config.PossibleItems[rand.Next(scp035.instance.Config.PossibleItems.Count)],
-						-4.656647E+11f,
-						p.transform.position,
-						p.transform.rotation,
-						0, 0, 0).GetComponent<Pickup>();
+					ItemPickupBase p = GetRandomItem();
+					Pickup a = new Item(scp035.instance.Config.PossibleItems[rand.Next(scp035.instance.Config.PossibleItems.Count)]).Spawn(p.transform.position);
 					scpPickups.Add(a);
 				}
 			}
@@ -54,7 +54,7 @@ namespace scp035
 				{
 					player.CustomInfo = string.Empty;
 					player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
-					if (isHidden) player.ReferenceHub.characterClassManager.CallCmdRequestHideTag();
+					if (isHidden) player.ReferenceHub.characterClassManager.UserCode_CmdRequestHideTag();
 				}
 				if (scp035.instance.Config.CanHealBeyondHostHp)
 				{
@@ -73,17 +73,24 @@ namespace scp035
 			{
 				if (player != null && p035 != player)
 				{
+					p035.ClearInventory();
 					Vector3 pos = player.Position;
 					p035.ChangeRole(player.Role, true);
 					Timing.CallDelayed(0.5f, () => p035.Position = pos);
 
-					foreach (Inventory.SyncItemInfo item in player.Inventory.items) p035.Inventory.AddNewItem(item.id);
+					Timing.CallDelayed(0.8f, () =>
+					{
+						foreach (Item item in player.Items) p035.AddItem(item);
+					});
+					
 				}
 				maxHP = player?.MaxHealth ?? p035.MaxHealth;
 				p035.Health = scp035.instance.Config.Health;
-				p035.Ammo[(int)AmmoType.Nato556] = 250;
-				p035.Ammo[(int)AmmoType.Nato762] = 250;
-				p035.Ammo[(int)AmmoType.Nato9] = 250;
+				p035.Ammo[ItemType.Ammo12gauge] = 60;
+				p035.Ammo[ItemType.Ammo44cal] = 60;
+				p035.Ammo[ItemType.Ammo556x45] = 60;
+				p035.Ammo[ItemType.Ammo762x39] = 60;
+				p035.Ammo[ItemType.Ammo9x19] = 60;
 			}
 
 			if (!string.IsNullOrEmpty(p035.ReferenceHub.serverRoles.HiddenBadge))
@@ -117,7 +124,7 @@ namespace scp035
 		{
 			if (scp035.instance.Config.SelfInfect)
 			{
-				pItem.Delete();
+				pItem.Destroy();
 
 				Spawn035(player, player);
 
@@ -135,7 +142,7 @@ namespace scp035
 				List<Player> pList = Player.List.Where(x => x.Role == RoleType.Spectator && !x.ReferenceHub.serverRoles.OverwatchEnabled && x.UserId != null && x.UserId != string.Empty).ToList();
 				if (pList.Count > 0 && scpPlayer == null)
 				{
-					pItem.Delete();
+					pItem.Destroy();
 
 					Spawn035(pList[rand.Next(pList.Count)], player);
 
@@ -224,7 +231,7 @@ namespace scp035
 
 		private void ExitPD(Player player)
 		{
-			if (!Warhead.IsDetonated) player.Position = Map.GetRandomSpawnPoint(RoleType.Scp096);
+			if (!Warhead.IsDetonated) player.Position = RoleType.Scp096.GetRandomSpawnProperties().Item1;
 			else player.Kill();
 		}
 	}

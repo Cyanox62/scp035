@@ -19,6 +19,7 @@ namespace scp035
 		{
 			base.OnEnabled();
 
+			//HarmonyLib.Harmony.DEBUG = true;
 			instance = this;
 
 			foreach (MethodBase method in Events.Instance.Harmony.GetPatchedMethods())
@@ -50,15 +51,15 @@ namespace scp035
 			Exiled.Events.Handlers.Player.EnteringPocketDimension += ev.OnPocketDimensionEnter;
 			Exiled.Events.Handlers.Server.EndingRound += ev.OnCheckRoundEnd;
 			Exiled.Events.Handlers.Player.ChangingRole += ev.OnSetClass;
-			Exiled.Events.Handlers.Player.Left += ev.OnPlayerLeave;
+			Exiled.Events.Handlers.Player.Destroying += ev.OnPlayerLeave;
 			Exiled.Events.Handlers.Scp106.Containing += ev.OnContain106;
-			Exiled.Events.Handlers.Player.InsertingGeneratorTablet += ev.OnInsertTablet;
+			Exiled.Events.Handlers.Player.ActivatingGenerator += ev.OnActivatingGenerator;
 			Exiled.Events.Handlers.Player.FailingEscapePocketDimension += ev.OnPocketDimensionDie;
 			Exiled.Events.Handlers.Player.EscapingPocketDimension += ev.OnPocketDimensionEscape;
 			Exiled.Events.Handlers.Player.Shooting += ev.OnShoot;
-			Exiled.Events.Handlers.Player.UsingMedicalItem += ev.OnUseMedicalItem;
-			Exiled.Events.Handlers.Player.MedicalItemUsed += ev.OnUsedMedicalItem;
-			Exiled.Events.Handlers.Server.SendingRemoteAdminCommand += ev.OnRACommand;
+			Exiled.Events.Handlers.Player.UsingItem += ev.OnUsingItem;
+			Exiled.Events.Handlers.Player.ItemUsed += ev.OnItemUsed;
+			Exiled.Events.Handlers.Player.Escaping += ev.OnEscaping;
 		}
 
 		public override void OnDisabled()
@@ -73,15 +74,15 @@ namespace scp035
 			Exiled.Events.Handlers.Player.EnteringPocketDimension -= ev.OnPocketDimensionEnter;
 			Exiled.Events.Handlers.Server.EndingRound -= ev.OnCheckRoundEnd;
 			Exiled.Events.Handlers.Player.ChangingRole -= ev.OnSetClass;
-			Exiled.Events.Handlers.Player.Left -= ev.OnPlayerLeave;
+			Exiled.Events.Handlers.Player.Destroying -= ev.OnPlayerLeave;
 			Exiled.Events.Handlers.Scp106.Containing -= ev.OnContain106;
-			Exiled.Events.Handlers.Player.InsertingGeneratorTablet -= ev.OnInsertTablet;
+			Exiled.Events.Handlers.Player.ActivatingGenerator -= ev.OnActivatingGenerator;
 			Exiled.Events.Handlers.Player.FailingEscapePocketDimension -= ev.OnPocketDimensionDie;
 			Exiled.Events.Handlers.Player.EscapingPocketDimension -= ev.OnPocketDimensionEscape;
 			Exiled.Events.Handlers.Player.Shooting -= ev.OnShoot;
-			Exiled.Events.Handlers.Player.UsingMedicalItem -= ev.OnUseMedicalItem;
-			Exiled.Events.Handlers.Player.MedicalItemUsed -= ev.OnUsedMedicalItem;
-			Exiled.Events.Handlers.Server.SendingRemoteAdminCommand -= ev.OnRACommand;
+			Exiled.Events.Handlers.Player.UsingItem -= ev.OnUsingItem;
+			Exiled.Events.Handlers.Player.ItemUsed -= ev.OnItemUsed;
+			Exiled.Events.Handlers.Player.Escaping -= ev.OnEscaping;
 
 			Events.DisabledPatchesHashSet.Remove(cmdmoveplayer);
 
