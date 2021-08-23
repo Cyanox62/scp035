@@ -1,10 +1,11 @@
 ﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Exiled.API.Enums;
 
 namespace scp035
 {
-	using Exiled.API.Enums;
+	
 	public class Config : IConfig
 	{
 		[Description("Determines if the plugin is enabled or not.")]
@@ -19,26 +20,26 @@ namespace scp035
 			ItemType.KeycardZoneManager,
 			ItemType.KeycardGuard,
 			ItemType.KeycardContainmentEngineer,
-			ItemType.KeycardNtfLieutenant,
-			ItemType.KeycardNtfCommander,
-			ItemType.KeycardNtfOfficer,
+			ItemType.KeycardNTFLieutenant,
+			ItemType.KeycardNTFCommander,
+			ItemType.KeycardNTFOfficer,
 			ItemType.KeycardFacilityManager,
 			ItemType.KeycardChaosInsurgency,
 			ItemType.KeycardO5,
 			ItemType.Radio,
 			ItemType.Medkit,
 			ItemType.Flashlight,
-			ItemType.MicroHid,
-			ItemType.GunAk,
-			ItemType.GunCom15,
-			ItemType.GunCom18,
+			ItemType.MicroHID,
+			ItemType.GunAK,
+			ItemType.GunCOM15,
+			ItemType.GunCOM18,
 			ItemType.GunCrossvec,
-			ItemType.GunE11Sr,
-			ItemType.GunFsp9,
+			ItemType.GunE11SR,
+			ItemType.GunFSP9,
 			ItemType.GunLogicer,
 			ItemType.GunRevolver,
 			ItemType.GunShotgun,
-			ItemType.GrenadeHe,
+			ItemType.GrenadeHE,
 			ItemType.GrenadeFlash,
 			ItemType.Adrenaline,
 			ItemType.Painkillers

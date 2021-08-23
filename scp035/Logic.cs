@@ -48,6 +48,11 @@ namespace scp035
 		{
 			Player player = scpPlayer;
 			scpPlayer = null;
+			Scp035JustDied = player;
+			Timing.CallDelayed(10f, () =>
+			{
+				Scp035JustDied = null;
+			});
 			if (player != null)
 			{
 				if (setRank)

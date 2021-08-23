@@ -25,6 +25,8 @@ namespace scp035
 		private static int maxHP;
 		private static System.Random rand = new System.Random();
 
+		internal static Player Scp035JustDied;
+
 		private static List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
 
 		public void OnRoundStart()
@@ -34,6 +36,7 @@ namespace scp035
 			scpPickups.Clear();
 			ffPlayers.Clear();
 			scpPlayer = null;
+			Scp035JustDied = null;
 
 			coroutines.Add(Timing.CallDelayed(1f, () => Timing.RunCoroutine(RotatePickup())));
 			coroutines.Add(Timing.RunCoroutine(CorrodeUpdate()));
@@ -208,7 +211,7 @@ namespace scp035
 
 		public void OnUsingItem(UsingItemEventArgs ev)
 		{
-			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.Scp500 || ev.Item.Type == ItemType.Scp207) && (!scp035.instance.Config.CanUseMedicalItems || (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health >= maxHP)))
+			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.SCP500 || ev.Item.Type == ItemType.SCP207) && (!scp035.instance.Config.CanUseMedicalItems || (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health >= maxHP)))
 			{
 				ev.IsAllowed = false;
 			}
@@ -216,12 +219,12 @@ namespace scp035
 
 		public void OnItemUsed(UsedItemEventArgs ev)
 		{
-			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.Scp500 || ev.Item.Type == ItemType.Scp207))
+			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.SCP500 || ev.Item.Type == ItemType.SCP207))
 			{
 				int cMax = (int)(maxHP * scp035.instance.Config.OverhealMultiplier);
 				if (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health > maxHP)
 				{
-					if (ev.Item.Type == ItemType.Scp207)
+					if (ev.Item.Type == ItemType.SCP207)
 						ev.Player.Health = UnityEngine.Mathf.Max(maxHP, ev.Player.Health - 30);
 					else
 						ev.Player.Health = maxHP;
