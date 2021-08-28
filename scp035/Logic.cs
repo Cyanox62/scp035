@@ -14,6 +14,7 @@ namespace scp035
 {
 	partial class EventHandlers
 	{
+
 		private static void RemovePossessedItems()
 		{
 			for (int i = 0; i < scpPickups.Count; i++)
@@ -74,14 +75,14 @@ namespace scp035
 
 		public static void Spawn035(Player p035, Player player = null, bool full = true)
 		{
+			scpPlayer = p035;
 			if (full)
 			{
 				if (player != null && p035 != player)
 				{
 					p035.ClearInventory();
-					Vector3 pos = player.Position;
+					PositionToSpawn = player.Position;
 					p035.ChangeRole(player.Role, true);
-					Timing.CallDelayed(0.5f, () => p035.Position = pos);
 
 					Timing.CallDelayed(0.8f, () =>
 					{
@@ -110,8 +111,6 @@ namespace scp035
 			if (!Scp096.TurnedPlayers.Contains(p035)) Scp096.TurnedPlayers.Add(p035);
 
 			p035.Broadcast(scp035.instance.Config.Scp035PlayerMessageTime, scp035.instance.Config.Scp035PlayerMessage);
-
-			scpPlayer = p035;
 
 			if (scp035.instance.Config.CorrodeHost)
 			{

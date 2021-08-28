@@ -60,6 +60,7 @@ namespace scp035
 			Exiled.Events.Handlers.Player.UsingItem += ev.OnUsingItem;
 			Exiled.Events.Handlers.Player.ItemUsed += ev.OnItemUsed;
 			Exiled.Events.Handlers.Player.Escaping += ev.OnEscaping;
+			Exiled.Events.Handlers.Player.Spawning += ev.OnSpawning;
 		}
 
 		public override void OnDisabled()
@@ -83,6 +84,7 @@ namespace scp035
 			Exiled.Events.Handlers.Player.UsingItem -= ev.OnUsingItem;
 			Exiled.Events.Handlers.Player.ItemUsed -= ev.OnItemUsed;
 			Exiled.Events.Handlers.Player.Escaping -= ev.OnEscaping;
+			Exiled.Events.Handlers.Player.Spawning -= ev.OnSpawning;
 
 			Events.DisabledPatchesHashSet.Remove(cmdmoveplayer);
 

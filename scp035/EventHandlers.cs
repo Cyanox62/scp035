@@ -9,6 +9,8 @@ using MEC;
 namespace scp035
 {
 	using Exiled.API.Enums;
+	using UnityEngine;
+
 	partial class EventHandlers
 	{
 		public scp035 plugin;
@@ -24,6 +26,8 @@ namespace scp035
 		private static bool isRotating;
 		private static int maxHP;
 		private static System.Random rand = new System.Random();
+
+		internal static Vector3 PositionToSpawn;
 
 		internal static Player Scp035JustDied;
 
@@ -72,7 +76,10 @@ namespace scp035
 		{
 			if (ffPlayers.Contains(ev.Attacker.Id))
 			{
-				RemoveFF(ev.Attacker);
+				Timing.CallDelayed(0.1f, () =>
+				{
+					RemoveFF(ev.Attacker);
+				});
 			}
 
 			if (scpPlayer != null)
@@ -239,6 +246,14 @@ namespace scp035
 		public void OnEscaping(EscapingEventArgs ev)
 		{
 			if (ev.Player == scpPlayer) ev.IsAllowed = false;
+		}
+
+		public void OnSpawning(SpawningEventArgs ev)
+		{
+			if (ev.Player == scpPlayer)
+			{
+				ev.Position = PositionToSpawn;
+			}
 		}
 	}
 }
