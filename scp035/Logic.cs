@@ -223,7 +223,6 @@ namespace scp035
 
 		private void GrantFF(Player player)
 		{
-			Log.Info("Granting friendly fire 035");
 			player.IsFriendlyFireEnabled = true;
 			ffPlayers.Add(player.Id);
 		}
