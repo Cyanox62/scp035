@@ -84,11 +84,7 @@ namespace scp035
 
 			if (scpPlayer != null)
 			{
-				if (!scp035.instance.Config.ScpFriendlyFire &&
-					((ev.Attacker.Id == scpPlayer?.Id &&
-					ev.Target.Team == Team.SCP) ||
-					(ev.Target.Id == scpPlayer?.Id &&
-					ev.Attacker.Team == Team.SCP)))
+				if (!scp035.instance.Config.ScpFriendlyFire && ev.Target == scpPlayer && ev.Attacker.Team == Team.SCP)
 				{
 					ev.Amount = 0f;
 				}
@@ -102,6 +98,14 @@ namespace scp035
 				{
 					ev.Amount = 0f;
 				}
+			}
+		}
+
+		public void OnDying(DyingEventArgs ev)
+		{
+			if (!scp035.instance.Config.ScpFriendlyFire && ev.Target == scpPlayer && ev.Killer.Team == Team.SCP)
+			{
+				ev.IsAllowed = false
 			}
 		}
 
