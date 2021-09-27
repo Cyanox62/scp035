@@ -105,7 +105,7 @@ namespace scp035
 		{
 			if (!scp035.instance.Config.ScpFriendlyFire && ev.Target == scpPlayer && ev.Killer.Team == Team.SCP)
 			{
-				ev.IsAllowed = false
+				ev.IsAllowed = false;
 			}
 		}
 
