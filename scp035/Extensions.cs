@@ -29,7 +29,7 @@ namespace scp035
 
 		public static void Damage(this Player player, int amount, DamageTypes.DamageType damageType)
 		{
-			player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(amount, "WORLD", damageType, player.ReferenceHub.queryProcessor.PlayerId), player.GameObject);
+			player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(amount, "WORLD", damageType, player.ReferenceHub.queryProcessor.PlayerId, true), player.GameObject);
 		}
 
 		public static void PlaceCorrosion(this Player player)

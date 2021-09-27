@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Exiled.API.Features;
+using Exiled.API.Features.Items;
 using Exiled.Events.EventArgs;
 using MEC;
 
 namespace scp035
 {
+	using Exiled.API.Enums;
+	using UnityEngine;
+
 	partial class EventHandlers
 	{
 		public scp035 plugin;
@@ -23,6 +27,10 @@ namespace scp035
 		private static int maxHP;
 		private static System.Random rand = new System.Random();
 
+		internal static Vector3 PositionToSpawn;
+
+		internal static Player Scp035JustDied;
+
 		private static List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
 
 		public void OnRoundStart()
@@ -32,6 +40,7 @@ namespace scp035
 			scpPickups.Clear();
 			ffPlayers.Clear();
 			scpPlayer = null;
+			Scp035JustDied = null;
 
 			coroutines.Add(Timing.CallDelayed(1f, () => Timing.RunCoroutine(RotatePickup())));
 			coroutines.Add(Timing.RunCoroutine(CorrodeUpdate()));
@@ -67,16 +76,15 @@ namespace scp035
 		{
 			if (ffPlayers.Contains(ev.Attacker.Id))
 			{
-				RemoveFF(ev.Attacker);
+				Timing.CallDelayed(0.1f, () =>
+				{
+					RemoveFF(ev.Attacker);
+				});
 			}
 
 			if (scpPlayer != null)
 			{
-				if (!scp035.instance.Config.ScpFriendlyFire &&
-					((ev.Attacker.Id == scpPlayer?.Id &&
-					ev.Target.Team == Team.SCP) ||
-					(ev.Target.Id == scpPlayer?.Id &&
-					ev.Attacker.Team == Team.SCP)))
+				if (!scp035.instance.Config.ScpFriendlyFire && ev.Target == scpPlayer && ev.Attacker.Team == Team.SCP)
 				{
 					ev.Amount = 0f;
 				}
@@ -93,10 +101,18 @@ namespace scp035
 			}
 		}
 
+		public void OnDying(DyingEventArgs ev)
+		{
+			if (!scp035.instance.Config.ScpFriendlyFire && ev.Target == scpPlayer && ev.Killer.Team == Team.SCP)
+			{
+				ev.IsAllowed = false
+			}
+		}
+
 		public void OnShoot(ShootingEventArgs ev)
 		{
-			if (ev.Target == null || scpPlayer == null) return;
-			Player target = Player.Get(ev.Target);
+			if (scpPlayer == null) return;
+			Player target = Player.Get(ev.TargetNetId);
 			if (target == null) return;
 
 			if ((ev.Shooter.Id == scpPlayer?.Id &&
@@ -162,7 +178,7 @@ namespace scp035
 			}
 		}
 
-		public void OnPlayerLeave(LeftEventArgs ev)
+		public void OnPlayerLeave(DestroyingEventArgs ev)
 		{
 			if (ev.Player.Id == scpPlayer?.Id)
 			{
@@ -178,7 +194,7 @@ namespace scp035
 			}
 		}
 
-		public void OnInsertTablet(InsertingGeneratorTabletEventArgs ev)
+		public void OnActivatingGenerator(ActivatingGeneratorEventArgs ev)
 		{
 			if (ev.Player.Id == scpPlayer?.Id && !scp035.instance.Config.ScpFriendlyFire)
 			{
@@ -204,22 +220,22 @@ namespace scp035
 			}
 		}
 
-		public void OnUseMedicalItem(UsingMedicalItemEventArgs ev)
+		public void OnUsingItem(UsingItemEventArgs ev)
 		{
-			if (ev.Player.Id == scpPlayer?.Id && (ev.Item == ItemType.Adrenaline || ev.Item == ItemType.Painkillers || ev.Item == ItemType.Medkit || ev.Item == ItemType.SCP500) && (!scp035.instance.Config.CanUseMedicalItems || (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health >= maxHP)))
+			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.SCP500 || ev.Item.Type == ItemType.SCP207) && (!scp035.instance.Config.CanUseMedicalItems || (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health >= maxHP)))
 			{
 				ev.IsAllowed = false;
 			}
 		}
 
-		public void OnUsedMedicalItem(UsedMedicalItemEventArgs ev)
+		public void OnItemUsed(UsedItemEventArgs ev)
 		{
-			if (ev.Player.Id == scpPlayer?.Id && (ev.Item == ItemType.Adrenaline || ev.Item == ItemType.Painkillers || ev.Item == ItemType.Medkit || ev.Item == ItemType.SCP500 || ev.Item == ItemType.SCP207))
+			if (ev.Player.Id == scpPlayer?.Id && (ev.Item.Type == ItemType.Adrenaline || ev.Item.Type == ItemType.Painkillers || ev.Item.Type == ItemType.Medkit || ev.Item.Type == ItemType.SCP500 || ev.Item.Type == ItemType.SCP207))
 			{
 				int cMax = (int)(maxHP * scp035.instance.Config.OverhealMultiplier);
 				if (!scp035.instance.Config.CanHealBeyondHostHp && ev.Player.Health > maxHP)
 				{
-					if (ev.Item == ItemType.SCP207)
+					if (ev.Item.Type == ItemType.SCP207)
 						ev.Player.Health = UnityEngine.Mathf.Max(maxHP, ev.Player.Health - 30);
 					else
 						ev.Player.Health = maxHP;
@@ -231,69 +247,16 @@ namespace scp035
 			}
 		}
 
-		public void OnRACommand(SendingRemoteAdminCommandEventArgs ev)
+		public void OnEscaping(EscapingEventArgs ev)
 		{
-			string cmd = ev.Name.ToLower();
-			if (cmd == "spawn035")
+			if (ev.Player == scpPlayer) ev.IsAllowed = false;
+		}
+
+		public void OnSpawning(SpawningEventArgs ev)
+		{
+			if (ev.Player == scpPlayer)
 			{
-				ev.IsAllowed = false;
-				if (scpPlayer == null)
-				{
-					Player player = null;
-					if (ev.Arguments.Count >= 1)
-					{
-						if (int.TryParse(ev.Arguments[0], out int classid) && classid >= 0 && classid <= 17)
-						{
-							bool full = false;
-							if (ev.Arguments.Count >= 2 && !bool.TryParse(ev.Arguments[1], out full))
-							{
-								player = Player.Get(ev.Arguments[1]);
-								if (ev.Arguments.Count == 3 && !bool.TryParse(ev.Arguments[2], out full))
-								{
-									ev.Success = false;
-									ev.Sender.RemoteAdminMessage("Error: Invalid value for full.");
-									return;
-								}
-								if (player != null)
-								{
-									player.SetRole((RoleType)classid);
-									EventHandlers.Spawn035(player, null, full);
-									ev.Success = true;
-									ev.Sender.RemoteAdminMessage($"Spawned '{player.Nickname}' as SCP-035.");
-								}
-								else
-								{
-									ev.Success = false;
-									ev.Sender.RemoteAdminMessage("Error: Invalid player.");
-									return;
-								}
-							}
-							else
-							{
-								player = Player.List.ElementAt(UnityEngine.Random.Range(0, Player.List.Count()));
-								player.SetRole((RoleType)classid);
-								EventHandlers.Spawn035(player, null, full);
-								ev.Success = true;
-								ev.Sender.RemoteAdminMessage($"Spawned '{player.Nickname}' as SCP-035.");
-							}
-						}
-						else
-						{
-							ev.Success = false;
-							ev.Sender.RemoteAdminMessage("Error: Invalid ClassID.");
-						}
-					}
-					else
-					{
-						ev.Success = false;
-						ev.Sender.RemoteAdminMessage("Usage: SPAWN035 (CLASSID) [PLAYER / PLAYERID / STEAMID] [full TRUE/FALSE]");
-					}
-				}
-				else
-				{
-					ev.Success = false;
-					ev.Sender.RemoteAdminMessage("Error: SCP-035 is currently alive.");
-				}
+				ev.Position = PositionToSpawn;
 			}
 		}
 	}

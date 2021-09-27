@@ -1,16 +1,49 @@
 ﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Exiled.API.Enums;
 
 namespace scp035
 {
+	
 	public class Config : IConfig
 	{
 		[Description("Determines if the plugin is enabled or not.")]
 		public bool IsEnabled { get; set; } = true;
 
 		[Description("The items that are possible to spawn as SCP-035.")]
-		public List<int> PossibleItems { get; set; } = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 23, 24, 25, 26, 27, 30, 33, 34 };
+		public List<ItemType> PossibleItems { get; set; } = new List<ItemType>()
+		{
+			ItemType.KeycardJanitor,
+			ItemType.KeycardScientist,
+			ItemType.KeycardResearchCoordinator,
+			ItemType.KeycardZoneManager,
+			ItemType.KeycardGuard,
+			ItemType.KeycardContainmentEngineer,
+			ItemType.KeycardNTFLieutenant,
+			ItemType.KeycardNTFCommander,
+			ItemType.KeycardNTFOfficer,
+			ItemType.KeycardFacilityManager,
+			ItemType.KeycardChaosInsurgency,
+			ItemType.KeycardO5,
+			ItemType.Radio,
+			ItemType.Medkit,
+			ItemType.Flashlight,
+			ItemType.MicroHID,
+			ItemType.GunAK,
+			ItemType.GunCOM15,
+			ItemType.GunCOM18,
+			ItemType.GunCrossvec,
+			ItemType.GunE11SR,
+			ItemType.GunFSP9,
+			ItemType.GunLogicer,
+			ItemType.GunRevolver,
+			ItemType.GunShotgun,
+			ItemType.GrenadeHE,
+			ItemType.GrenadeFlash,
+			ItemType.Adrenaline,
+			ItemType.Painkillers
+		};
 
 		[Description("The health for SCP-035")]
 		public int Health { get; set; } = 300;
